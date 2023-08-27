@@ -1,14 +1,14 @@
 import { Add, Remove } from "@material-ui/icons";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { mobile } from "../responsive";
-// import StripeCheckout from "react-stripe-checkout";
+import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 // import { userRequest } from "../requestMethods";
-// import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 
 const KEY = process.env.REACT_APP_STRIPE;
 
@@ -160,29 +160,40 @@ const Button = styled.button`
 `;
 
 const Cart = () => {
-  //   const cart = useSelector((state) => state.cart);
+  const cart = useSelector((state) => state.cart);
   const [stripeToken, setStripeToken] = useState(null);
-  //   const history = useHistory();
+  const history = useNavigate();
 
-  //   const onToken = (token) => {
-  //     setStripeToken(token);
-  //   };
+  const onToken = (token) => {
+    setStripeToken(token);
+  };
 
-  //   useEffect(() => {
-  //     const makeRequest = async () => {
-  //       try {
-  //         const res = await userRequest.post("/checkout/payment", {
-  //           tokenId: stripeToken.id,
-  //           amount: 500,
-  //         });
-  //         history.push("/success", {
-  //           stripeData: res.data,
-  //           products: cart,
-  //         });
-  //       } catch {}
-  //     };
-  //     stripeToken && makeRequest();
-  //   }, [stripeToken, cart.total, history]);
+  // console.log(stripeToken);
+
+  const GotoHome = () => {
+    history("/e-commerce-app");
+  };
+
+  useEffect(() => {
+    const makeRequest = async () => {
+      try {
+        // const res = await userRequest.post("/checkout/payment", {
+        //   id: stripeToken.id,
+        //   amount: cart.total,
+        // });
+        history(
+          "/success"
+          // , {
+          //   state: { stripeData: res.data, products: cart },
+          // }
+        );
+        console.log(localStorage.getItem("persist:root"));
+        localStorage.setItem("persist:root", "");
+      } catch {}
+    };
+    stripeToken && cart.total >= 1 && makeRequest();
+  }, [stripeToken, cart.total, history]);
+
   return (
     <Container>
       <Navbar />
@@ -190,7 +201,7 @@ const Cart = () => {
       <Wrapper>
         <Title>YOUR BAG</Title>
         <Top>
-          <TopButton>CONTINUE SHOPPING</TopButton>
+          <TopButton onClick={() => GotoHome()}>CONTINUE SHOPPING</TopButton>
           <TopTexts>
             <TopText>Shopping Bag(2)</TopText>
             <TopText>Your Wishlist (0)</TopText>
@@ -199,93 +210,39 @@ const Cart = () => {
         </Top>
         <Bottom>
           <Info>
-            {/* {cart.products.map((product) => ( */}
-            <Product>
-              <ProductDetail>
-                <Image
-                  src="https://static.nike.com/a/images/t_default/5c3654f1-e3d9-4d9d-838e-fe4cdc30d352/gt-jump-basketball-shoes-22QS5F.png"
-                  // {product.img}
-                />
-                <Details>
-                  <ProductName>
-                    <b>Product: </b>
-                    {/* {product.title} */}
-                    NIKE SHOES
-                  </ProductName>
-                  <ProductId>
-                    <b>ID: </b>
-                    {/* {product._id} */}
-                    9878876545
-                  </ProductId>
-                  <ProductColor
-                    color=""
-                    //   {product.color}
-                  />
-                  <ProductSize>
-                    <b>Size: </b>
-                    {/* {product.size} */}
-                    37.5
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                Price
-                <ProductAmountContainer>
-                  <Add />
-                  <ProductAmount>2{/* {product.quantity} */}</ProductAmount>
-                  <Remove />
-                </ProductAmountContainer>
-                <ProductPrice>
-                  $ 30
-                  {/* $ {product.price * product.quantity} */}
-                </ProductPrice>
-              </PriceDetail>
-            </Product>
-            {/* ))} */}
-
-            {/* {cart.products.map((product) => ( */}
-            <Product>
-              <ProductDetail>
-                <Image
-                  src="https://www.nepal.ubuy.com/productimg/?image=aHR0cHM6Ly9tLm1lZGlhLWFtYXpvbi5jb20vaW1hZ2VzL0kvODFvVnhCMUVDM1MuX0FDX1VMMTUwMF8uanBn.jpg"
-                  // {product.img}
-                />
-                <Details>
-                  <ProductName>
-                    <b>Product: </b>
-                    {/* {product.title} */}
-                    NIKE SHIRT
-                  </ProductName>
-                  <ProductId>
-                    <b>ID: </b>
-                    {/* {product._id} */}
-                    9878876545
-                  </ProductId>
-                  <ProductColor
-                    color=""
-                    //   {product.color}
-                  />
-                  <ProductSize>
-                    <b>Size: </b>
-                    {/* {product.size} */}
-                    XXL
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                Price
-                <ProductAmountContainer>
-                  <Add />
-                  <ProductAmount>1{/* {product.quantity} */}</ProductAmount>
-                  <Remove />
-                </ProductAmountContainer>
-                <ProductPrice>
-                  $ 300
-                  {/* $ {product.price * product.quantity} */}
-                </ProductPrice>
-              </PriceDetail>
-            </Product>
-            {/* ))} */}
+            {cart.products.map((product) => (
+              <Product>
+                <ProductDetail>
+                  <Image src={product.img} />
+                  <Details>
+                    <ProductName>
+                      <b>Product: </b>
+                      {product.title}
+                    </ProductName>
+                    <ProductId>
+                      <b>ID: </b>
+                      {product.id}
+                    </ProductId>
+                    <ProductColor color={product.color} />
+                    <ProductSize>
+                      <b>Size: </b>
+                      {product.size}
+                    </ProductSize>
+                  </Details>
+                </ProductDetail>
+                <PriceDetail>
+                  Price
+                  <ProductAmountContainer>
+                    <Add />
+                    <ProductAmount>{product.quantity}</ProductAmount>
+                    <Remove />
+                  </ProductAmountContainer>
+                  <ProductPrice>
+                    $ {product.price * product.quantity}
+                  </ProductPrice>
+                </PriceDetail>
+              </Product>
+            ))}
 
             <Hr />
           </Info>
@@ -293,7 +250,7 @@ const Cart = () => {
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
             <SummaryItem>
               <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>$ 330{/* $ {cart.total} */}</SummaryItemPrice>
+              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Estimated Shipping</SummaryItemText>
@@ -305,24 +262,20 @@ const Cart = () => {
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Total</SummaryItemText>
-              <SummaryItemPrice>$ 330{/* $ {cart.total} */}</SummaryItemPrice>
+              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
-            {/* <StripeCheckout
-              name="Lama Shop"
-              image="https://avatars.githubusercontent.com/u/1486366?v=4"
+            <StripeCheckout
+              name="Rishi Shop"
+              image="https://yt3.ggpht.com/yti/AOXPAcUOBr_bD9dcQqX6BrIkaPYx2aUy9S6sgrIXso9__A=s88-c-k-c0x00ffffff-no-rj"
               billingAddress
               shippingAddress
-              description=""
-              //   {`Your total is $${cart.total}`}
-              amount=""
-              //   {cart.total * 100}
-              token=""
-              //   {onToken}
-              stripeKey=""
-              //   {KEY}
-            > */}
-            <Button>CHECKOUT NOW</Button>
-            {/* </StripeCheckout> */}
+              description={`Your total is $${cart.total}`}
+              amount={cart.total * 100}
+              token={onToken}
+              stripeKey={KEY}
+            >
+              <Button>CHECKOUT NOW</Button>
+            </StripeCheckout>
           </Summary>
         </Bottom>
       </Wrapper>

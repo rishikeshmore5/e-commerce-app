@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { popularProducts } from "../data";
 import Product from "./Product";
-// import axios from "axios";
+import axios from "axios";
 
 const Container = styled.div`
   padding: 20px;
@@ -17,14 +17,34 @@ const Products = ({ cat, filters, sort }) => {
 
   useEffect(() => {
     const getProducts = async () => {
-      //   try {
-      //     const res = await axios.get(
-      //       cat
-      //         ? `http://localhost:5000/api/products?category=${cat}`
-      //         : "http://localhost:5000/api/products"
-      //     );
-      //     setProducts(res.data);
-      //   } catch (err) {}
+      try {
+        var GetCatproducts = [];
+        if (cat) {
+          for (let i = 0; i < popularProducts.length; i++) {
+            if (popularProducts[i].categories.includes(cat)) {
+              console.log(cat);
+              GetCatproducts.push(popularProducts[i]);
+              setProducts(GetCatproducts);
+            }
+          }
+        } else {
+          setProducts(popularProducts);
+        }
+        // for (let i = 0; i < popularProducts.length; i++) {
+        //   if (popularProducts[i].categories.includes(cat)) {
+        //     console.log(cat);
+        //     GetCatproducts.push(popularProducts[i]);
+        //     setProducts(GetCatproducts);
+        //   }
+        // }
+        //   const res = await axios.get(
+        //     cat
+        //       ? `http://localhost:5000/api/products?category=${cat}`
+        //       : "http://localhost:5000/api/products"
+        //   );
+
+        // setProducts(res.data);
+      } catch (err) {}
     };
     getProducts();
   }, [cat]);
@@ -58,14 +78,14 @@ const Products = ({ cat, filters, sort }) => {
 
   return (
     <Container>
-      {/* {cat
+      {cat
         ? filteredProducts.map((item) => <Product item={item} key={item.id} />)
         : products
             .slice(0, 8)
-            .map((item) => <Product item={item} key={item.id} />)} */}
-      {popularProducts.map((item) => (
+            .map((item) => <Product item={item} key={item.id} />)}
+      {/* {popularProducts.map((item) => (
         <Product item={item} key={item.id} />
-      ))}
+      ))} */}
     </Container>
   );
 };

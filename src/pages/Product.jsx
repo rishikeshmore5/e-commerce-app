@@ -5,11 +5,12 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
 import { mobile } from "../responsive";
-// import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-// import { publicRequest } from "../requestMethods";
-// import { addProduct } from "../redux/cartRedux";
-// import { useDispatch } from "react-redux";
+import { publicRequest } from "../requestMethods";
+import { addProduct } from "../redux/cartRedux";
+import { useDispatch } from "react-redux";
+import { popularProducts } from "../data";
 
 const Container = styled.div``;
 
@@ -121,23 +122,28 @@ const Button = styled.button`
 `;
 
 const Product = () => {
-  //   const location = useLocation();
-  //   const id = location.pathname.split("/")[2];
+  const location = useLocation();
+  const id = location.pathname.split("/")[2];
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
-  //   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  //   useEffect(() => {
-  //     const getProduct = async () => {
-  //       try {
-  //         const res = await publicRequest.get("/products/find/" + id);
-  //         setProduct(res.data);
-  //       } catch {}
-  //     };
-  //     getProduct();
-  //   }, [id]);
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        // const res = await publicRequest.get("/products/find/" + id);
+        for (let i = 0; i < popularProducts.length; i++) {
+          if (id == popularProducts[i].id) {
+            console.log(popularProducts[i]);
+            setProduct(popularProducts[i]);
+          }
+        }
+      } catch {}
+    };
+    getProduct();
+  }, [id]);
 
   const handleQuantity = (type) => {
     if (type === "dec") {
@@ -147,62 +153,36 @@ const Product = () => {
     }
   };
 
-  //   const handleClick = () => {
-  //     dispatch(addProduct({ ...product, quantity, color, size }));
-  //   };
+  const handleClick = () => {
+    //update cart
+    dispatch(addProduct({ ...product, quantity, color, size }));
+  };
   return (
     <Container>
       <Navbar />
       <Announcement />
       <Wrapper>
         <ImgContainer>
-          <Image
-            //   src={product.img}
-            src="https://ih1.redbubble.net/image.1788307802.2994/ssrco,classic_tee,mens,353d77:4d8b4ffd91,front_alt,square_product,600x600.jpg"
-          />
+          <Image src={product.img} />
         </ImgContainer>
         <InfoContainer>
-          <Title>
-            {/* {product.title} */}
-            Red T-Shirt
-          </Title>
-          <Desc>
-            {/* {product.desc} */}
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi et
-            adipisci iusto, dicta perferendis a esse ex eveniet debitis
-            perspiciatis excepturi eum quos consectetur repellat reiciendis quod
-            expedita, iste aliquam enim maiores! Ea!
-          </Desc>
-          <Price>
-            $ 20
-            {/* {product.price} */}
-          </Price>
+          <Title>{product.title}</Title>
+          <Desc>{product.desc}</Desc>
+          <Price>$ {product.price}</Price>
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
-              {/* {product.color?.map((c) => (
-                <FilterColor
-                 color={c} key={c} onClick={() => setColor(c)}   
-                 />
-              ))} */}
-              <FilterColor color="black" />
-              <FilterColor color="darkblue" />
-              <FilterColor color="red" />
+              {product.color?.map((c) => (
+                <FilterColor color={c} key={c} onClick={() => setColor(c)} />
+              ))}
             </Filter>
             <Filter>
               <FilterTitle>Size</FilterTitle>
-              <FilterSize
-              //   onChange={(e) => setSize(e.target.value)}
-              >
-                {/* {product.size?.map((s) => (
+              <FilterSize onChange={(e) => setSize(e.target.value)}>
+                {product.size?.map((s) => (
                   <FilterSizeOption key={s}>{s}</FilterSizeOption>
-                ))} */}
-                <FilterSizeOption> XS</FilterSizeOption>
-                <FilterSizeOption> S</FilterSizeOption>
-                <FilterSizeOption> M</FilterSizeOption>
-                <FilterSizeOption> L</FilterSizeOption>
+                ))}
               </FilterSize>
-              {/* <FilterSizeOption key={s}>{s}</FilterSizeOption> */}
             </Filter>
           </FilterContainer>
           <AddContainer>
@@ -211,11 +191,7 @@ const Product = () => {
               <Amount>{quantity}</Amount>
               <Add onClick={() => handleQuantity("inc")} />
             </AmountContainer>
-            <Button
-            // onClick={handleClick}
-            >
-              ADD TO CART
-            </Button>
+            <Button onClick={handleClick}>ADD TO CART</Button>
           </AddContainer>
         </InfoContainer>
       </Wrapper>

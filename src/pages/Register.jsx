@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { mobile } from "../responsive";
+import { Link } from "react-router-dom";
+import { useRef } from "react";
 
 const Container = styled.div`
   width: 100vw;
@@ -55,6 +57,16 @@ const Button = styled.button`
 `;
 
 const Register = () => {
+  const username = useRef();
+  const password = useRef();
+
+  const handleClick = () => {
+    console.log(username.current.value);
+    console.log(password.current.value);
+    sessionStorage.setItem("username", username.current.value);
+    sessionStorage.setItem("password", password.current.value);
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -62,15 +74,20 @@ const Register = () => {
         <Form>
           <Input placeholder="name" />
           <Input placeholder="last name" />
-          <Input placeholder="username" />
+          <Input ref={username} placeholder="username" />
           <Input placeholder="email" />
-          <Input placeholder="password" />
+          <Input ref={password} placeholder="password" />
           <Input placeholder="confirm password" />
           <Agreement>
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
-          <Button>CREATE</Button>
+          <Button onClick={handleClick}>
+            <Link className="link" to="/login">
+              CREATE
+            </Link>
+          </Button>
+          {/* <Button onClick={handleClick}>Show</Button> */}
         </Form>
       </Wrapper>
     </Container>
